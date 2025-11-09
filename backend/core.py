@@ -1,26 +1,28 @@
+import os
+
 from dotenv import load_dotenv
-from langchain.chains.retrieval import create_retrieval_chain
+from langchain_classic.chains.retrieval import create_retrieval_chain
 from langchain_community.llms.ollama import Ollama
 from langchain_core.prompts import PromptTemplate
 
 load_dotenv()
 
-from langchain import hub
-from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_classic import hub
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_pinecone import PineconeVectorStore
 
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 
-INDEX_NAME = "langchain-doc-index"
+INDEX_NAME = os.environ["INDEX_NAME"]
 
 
 def run_llm(query: str):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
     chat = ChatOpenAI(verbose=True, temperature=0)
-    chat = Ollama(model="llama3")
+    #chat = Ollama(model="llama3")
 
     retrieval_qa_chat_prompt: PromptTemplate = hub.pull(
         "langchain-ai/retrieval-qa-chat",
